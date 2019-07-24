@@ -50,7 +50,7 @@ public class checksum extends AppCompatActivity implements PaytmPaymentTransacti
                     "MID="+mid+
                             "&ORDER_ID=" + orderId+
                             "&CUST_ID="+custid+
-                            "&CHANNEL_ID=WAP&TXN_AMOUNT=1&WEBSITE=WEBSTAGING"+
+                            "&CHANNEL_ID=WAP&TXN_AMOUNT=1&WEBSITE=DEFAULT" +
                             "&CALLBACK_URL="+ varifyurl+"&INDUSTRY_TYPE_ID=Retail";
             JSONObject jsonObject = jsonParser.makeHttpRequest(url,"POST",param);
             // yaha per checksum ke saht order id or status receive hoga..
@@ -83,8 +83,8 @@ public class checksum extends AppCompatActivity implements PaytmPaymentTransacti
             paramMap.put("ORDER_ID", orderId);
             paramMap.put("CUST_ID", custid);
             paramMap.put("CHANNEL_ID", "WAP");
-            paramMap.put("TXN_AMOUNT", "100");
-            paramMap.put("WEBSITE", "WEBSTAGING");
+            paramMap.put("TXN_AMOUNT", "1");
+            paramMap.put("WEBSITE", "DEFAULT");
             paramMap.put("CALLBACK_URL" ,varifyurl);
             //paramMap.put( "EMAIL" , "abc@gmail.com");   // no need
             // paramMap.put( "MOBILE_NO" , "9144040888");  // no need
@@ -102,8 +102,8 @@ public class checksum extends AppCompatActivity implements PaytmPaymentTransacti
     @Override
     public void onTransactionResponse(Bundle bundle) {
         Log.e("checksum ", " respon true " + bundle.toString());
-        Intent i = new Intent(checksum.this, MainActivity.class);
-        startActivity(i);
+//        Intent i = new Intent(checksum.this, MainActivity.class);
+//        startActivity(i);
 
     }
     @Override
