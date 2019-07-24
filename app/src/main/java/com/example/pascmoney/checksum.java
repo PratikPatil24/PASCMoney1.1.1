@@ -27,7 +27,7 @@ public class checksum extends AppCompatActivity implements PaytmPaymentTransacti
         Intent intent = getIntent();
         orderId = intent.getExtras().getString("orderid");
         custid = intent.getExtras().getString("custid");
-        mid = "axESEi44386194598879"; /// your marchant key
+        mid = "axESEi44386194598879"; /// your marchant id
         sendUserDetailTOServerdd dl = new sendUserDetailTOServerdd();
         dl.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 // vollye , retrofit, asynch
