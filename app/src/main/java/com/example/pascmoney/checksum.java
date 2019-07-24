@@ -97,6 +97,7 @@ public class checksum extends AppCompatActivity implements PaytmPaymentTransacti
             // start payment service call here
             Service.startPaymentTransaction(checksum.this, true, true,
                     checksum.this  );
+
         }
     }
     @Override
