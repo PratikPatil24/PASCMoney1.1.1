@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
+
 import com.paytm.pgsdk.PaytmOrder;
 import com.paytm.pgsdk.PaytmPGService;
 import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
@@ -27,7 +29,7 @@ public class checksum extends AppCompatActivity implements PaytmPaymentTransacti
         Intent intent = getIntent();
         orderId = intent.getExtras().getString("orderid");
         custid = intent.getExtras().getString("custid");
-        mid = "axESEi44386194598879"; /// your marchant id
+        mid = "axESEi44386194598879"; /// your merchant id
         sendUserDetailTOServerdd dl = new sendUserDetailTOServerdd();
         dl.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 // vollye , retrofit, asynch
@@ -36,7 +38,9 @@ public class checksum extends AppCompatActivity implements PaytmPaymentTransacti
         private ProgressDialog dialog = new ProgressDialog(checksum.this);
         //private String orderId , mid, custid, amt;
         String url ="https://pascpayment.000webhostapp.com/generateChecksum.php";
-        String varifyurl = "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID"+orderId;
+        String verifyurl = "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID=" + orderId;
+
+        //String varifyurl = "https://pascpayment.000webhostapp.com/verifyChecksum.php";
         // "https://pguat.paytm.com/paytmchecksum/paytmCallback.jsp";
         String CHECKSUMHASH ="";
         @Override
@@ -50,8 +54,8 @@ public class checksum extends AppCompatActivity implements PaytmPaymentTransacti
                     "MID="+mid+
                             "&ORDER_ID=" + orderId+
                             "&CUST_ID="+custid+
-                            "&CHANNEL_ID=WAP&TXN_AMOUNT=1&WEBSITE=DEFAULT" +
-                            "&CALLBACK_URL="+ varifyurl+"&INDUSTRY_TYPE_ID=Retail";
+                            "&CHANNEL_ID=WAP&TXN_AMOUNT=1&WEBSITE=PRODUCTION" +
+                            "&CALLBACK_URL=" + verifyurl + "&INDUSTRY_TYPE_ID=Retail";
             JSONObject jsonObject = jsonParser.makeHttpRequest(url,"POST",param);
             // yaha per checksum ke saht order id or status receive hoga..
             Log.e("CheckSum result >>",jsonObject.toString());
@@ -84,8 +88,8 @@ public class checksum extends AppCompatActivity implements PaytmPaymentTransacti
             paramMap.put("CUST_ID", custid);
             paramMap.put("CHANNEL_ID", "WAP");
             paramMap.put("TXN_AMOUNT", "1");
-            paramMap.put("WEBSITE", "DEFAULT");
-            paramMap.put("CALLBACK_URL" ,varifyurl);
+            paramMap.put("WEBSITE", "PRODUCTION");
+            paramMap.put("CALLBACK_URL", verifyurl);
             //paramMap.put( "EMAIL" , "abc@gmail.com");   // no need
             // paramMap.put( "MOBILE_NO" , "9144040888");  // no need
             paramMap.put("CHECKSUMHASH" ,CHECKSUMHASH);
@@ -95,20 +99,62 @@ public class checksum extends AppCompatActivity implements PaytmPaymentTransacti
             Log.i("checksum ", "param "+ paramMap.toString());
             Service.initialize(Order,null);
             // start payment service call here
-            Service.startPaymentTransaction(checksum.this, true, true,
-                    checksum.this  );
+            Service.startPaymentTransaction(checksum.this, true, true, new PaytmPaymentTransactionCallback() {
+                /*Call Backs*/
+                public void someUIErrorOccurred(String inErrorMessage) {
+                }
 
+                public void onTransactionResponse(Bundle inResponse) {
+                    Toast.makeText(getApplicationContext(), "Payment Transaction response " + inResponse.toString(), Toast.LENGTH_LONG).show();
+                    Log.e("Response", inResponse.toString());
+
+                    Intent i = new Intent(getApplicationContext(), Success.class);
+                    i.putExtra("Response", inResponse.toString());
+                    startActivity(i);
+                    finish();
+                }
+
+                public void networkNotAvailable() {
+                }
+
+                public void clientAuthenticationFailed(String inErrorMessage) {
+                }
+
+                public void onErrorLoadingWebPage(int iniErrorCode, String inErrorMessage, String inFailingUrl) {
+                }
+
+                public void onBackPressedCancelTransaction() {
+                    Log.e("checksum ", " cancel call back respon  ");
+                    Toast.makeText(getApplicationContext(), "Payment Transaction response ", Toast.LENGTH_LONG).show();
+
+                    Intent i = new Intent(getApplicationContext(), Success.class);
+                    startActivity(i);
+                    finish();
+
+
+                }
+
+                public void onTransactionCancel(String inErrorMessage, Bundle inResponse) {
+
+                    Toast.makeText(getApplicationContext(), "Payment Transaction response " + inResponse.toString(), Toast.LENGTH_LONG).show();
+                    Log.e("Response", inResponse.toString());
+
+                    Intent i = new Intent(getApplicationContext(), Success.class);
+                    i.putExtra("Response", inResponse.toString());
+                    startActivity(i);
+                    finish();
+                }
+            });
         }
     }
     @Override
-    public void onTransactionResponse(Bundle bundle) {
-        Log.e("checksum ", " respon true " + bundle.toString());
-//        Intent i = new Intent(checksum.this, MainActivity.class);
-//        startActivity(i);
-
+    public void onTransactionResponse(Bundle inResponse) {
+        /*Display the message as below */
+        Toast.makeText(getApplicationContext(), "Payment Transaction response " + inResponse.toString(), Toast.LENGTH_LONG).show();
     }
     @Override
     public void networkNotAvailable() {
+        Toast.makeText(this, "Network=null", Toast.LENGTH_SHORT).show();
     }
     @Override
     public void clientAuthenticationFailed(String s) {
@@ -124,9 +170,16 @@ public class checksum extends AppCompatActivity implements PaytmPaymentTransacti
     @Override
     public void onBackPressedCancelTransaction() {
         Log.e("checksum ", " cancel call back respon  " );
+        Toast.makeText(getApplicationContext(), "Payment Transaction response ", Toast.LENGTH_LONG).show();
+
+        Intent i = new Intent(getApplicationContext(), Success.class);
+        startActivity(i);
+        finish();
+
     }
     @Override
     public void onTransactionCancel(String s, Bundle bundle) {
         Log.e("checksum ", "  transaction cancel " );
     }
 }
+//8059130863

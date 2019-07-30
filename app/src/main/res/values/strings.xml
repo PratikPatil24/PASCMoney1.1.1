@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PASCMoney</string>
+    <string name="title_activity_success">Success</string>
 </resources>
